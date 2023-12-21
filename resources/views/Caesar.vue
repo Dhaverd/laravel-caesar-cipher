@@ -13,7 +13,16 @@
                         false-value="En"
                         :label="`Language: ${codeLang}`"
                     ></v-switch>
-                    <v-text-field id="code-result" label="Result" variant="outlined" v-model="codeOutput"></v-text-field>
+                    <v-text-field loading id="code-result" label="Result" variant="outlined" v-model="codeOutput">
+                        <template v-slot:loader>
+                            <v-progress-linear
+                                :active="isLoadingCode"
+                                color="warning"
+                                height="3"
+                                indeterminate
+                            ></v-progress-linear>
+                        </template>
+                    </v-text-field>
                     <div style="text-align: center"><v-btn @click="caesarCipher(0)" class="customBtn">Code</v-btn></div>
                 </v-card-text>
                 <!--<v-card-actions><v-btn>Code</v-btn></v-card-actions>-->
@@ -30,7 +39,16 @@
                         false-value="En"
                         :label="`Language: ${decodeLang}`"
                     ></v-switch>
-                    <v-text-field id="decode-result" label="Result" variant="outlined" v-model="decodeOutput"></v-text-field>
+                    <v-text-field id="decode-result" label="Result" variant="outlined" v-model="decodeOutput">
+                        <template v-slot:loader>
+                            <v-progress-linear
+                                :active="isLoadingDecode"
+                                color="warning"
+                                height="3"
+                                indeterminate
+                            ></v-progress-linear>
+                        </template>
+                    </v-text-field>
                     <div style="text-align: center"><v-btn @click="caesarCipher(1)" class="customBtn">Decode</v-btn></div>
                 </v-card-text>
             </v-card>
@@ -59,7 +77,9 @@ export default {
         decodeText: '',
         decodeShift: 0,
         codeLang: 'En',
-        decodeLang: 'En'
+        decodeLang: 'En',
+        isLoadingCode: false,
+        isLoadingDecode: false
     }),
     methods: {
         caesarCipher(cd){
@@ -69,14 +89,18 @@ export default {
             }
 
             if (cd === 0){
+                this.isLoadingCode = true;
                 this.codeOutput = '';
                 getResp(cd, this.codeText, this.codeShift, this.codeLang).then( (res) => {
                     this.codeOutput = res;
+                    this.isLoadingCode = false;
                 });
             } else if (cd === 1){
+                this.isLoadingDecode = true;
                 this.decodeOutput = '';
                 getResp(cd, this.decodeText, this.decodeShift, this.decodeLang).then((res) => {
                     this.decodeOutput = res;
+                    this.isLoadingDecode = false;
                 });
             }
         },
